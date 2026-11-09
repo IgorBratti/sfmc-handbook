@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SFMC Handbook · Igor Bratti</title>
+  <meta name="description" content="Salesforce Marketing Cloud CloudPages, emails, AMPscript, SSJS, SQL and playbooks by Igor Bratti.">
+  <style>
+    :root { --ink:#1c2128; --muted:#59636e; --accent:#0b4f8a; --bg:#f5f7f9; --line:#d3dae2; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Arial, Helvetica, sans-serif; color:var(--ink); background:var(--bg); }
+    header { max-width:1100px; margin:0 auto; padding:40px 16px 8px; }
+    h1 { margin:0 0 8px; font-size:30px; }
+    h2 { margin:32px 0 12px; font-size:20px; }
+    p { margin:0 0 12px; color:var(--muted); line-height:1.55; }
+    a { color:var(--accent); }
+    main { max-width:1100px; margin:0 auto; padding:0 16px 48px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:16px; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:10px; overflow:hidden; display:flex; flex-direction:column; }
+    .thumb { height:190px; overflow:hidden; border-bottom:1px solid var(--line); background:#eef1f4; }
+    .thumb iframe { width:780px; height:580px; border:0; transform:scale(.33); transform-origin:0 0; pointer-events:none; }
+    .body { padding:14px 16px 16px; }
+    .body h3 { margin:0 0 6px; font-size:16px; }
+    .body p { font-size:14px; margin:0 0 10px; }
+    .links { font-size:14px; display:flex; gap:14px; }
+    .tags { font-size:12px; color:var(--muted); margin:0 0 8px; }
+    footer { max-width:1100px; margin:0 auto; padding:0 16px 40px; font-size:14px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Salesforce Marketing Cloud Handbook</h1>
+    <p>CloudPages, emails, AMPscript, SSJS, SQL and playbooks, with technical sheets and live previews.
+       Built by <a href="https://www.linkedin.com/in/igor-bratti/">Igor Bratti</a> ·
+       <a href="https://github.com/IgorBratti/sfmc-handbook">Source on GitHub</a></p>
+    <p>Previews use sample data. The real pages run AMPscript inside Marketing Cloud.</p>
+  </header>
+  <main>
+    <h2>CloudPages</h2>
+    <div class="grid">
+      <article class="card">
+        <div class="thumb"><iframe src="cloudpages/lead-capture-form/preview.html" title="Lead capture form" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="body"><h3>Lead capture form</h3><p class="tags">AMPscript · UpsertData · honeypot · consent</p>
+          <div class="links"><a href="cloudpages/lead-capture-form/preview.html">Preview</a><a href="https://github.com/IgorBratti/sfmc-handbook/tree/main/cloudpages/lead-capture-form">Technical sheet</a></div></div>
+      </article>
+      <article class="card">
+        <div class="thumb"><iframe src="cloudpages/preference-center/preview.html" title="Preference center" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="body"><h3>Preference center</h3><p class="tags">AMPscript · LogUnsubEvent · CloudPagesURL</p>
+          <div class="links"><a href="cloudpages/preference-center/preview.html">Preview</a><a href="https://github.com/IgorBratti/sfmc-handbook/tree/main/cloudpages/preference-center">Technical sheet</a></div></div>
+      </article>
+      <article class="card">
+        <div class="thumb"><iframe src="cloudpages/birthday-page/preview.html" title="Birthday page" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="body"><h3>Birthday page</h3><p class="tags">AMPscript · ClaimRowValue · unique coupons</p>
+          <div class="links"><a href="cloudpages/birthday-page/preview.html">Preview</a><a href="https://github.com/IgorBratti/sfmc-handbook/tree/main/cloudpages/birthday-page">Technical sheet</a></div></div>
+      </article>
+      <article class="card">
+        <div class="thumb"><iframe src="cloudpages/thank-you-page/preview.html" title="Thank-you page" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="body"><h3>Thank-you page</h3><p class="tags">AMPscript · encrypted parameters</p>
+          <div class="links"><a href="cloudpages/thank-you-page/preview.html">Preview</a><a href="https://github.com/IgorBratti/sfmc-handbook/tree/main/cloudpages/thank-you-page">Technical sheet</a></div></div>
+      </article>
+    </div>
+
+    <h2>Emails</h2>
+    <div class="grid">
+      <article class="card">
+        <div class="thumb"><iframe src="emails/templates/base-template.html" title="Base email template" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="body"><h3>Base email template</h3><p class="tags">Responsive · Outlook-safe · compliance footer</p>
+          <div class="links"><a href="emails/templates/base-template.html">Preview</a><a href="https://github.com/IgorBratti/sfmc-handbook/tree/main/emails">Components</a></div></div>
+      </article>
+    </div>
+
+    <h2>Code and guides</h2>
+    <p>
+      <a href="https://github.com/IgorBratti/sfmc-handbook/tree/main/ampscript">AMPscript recipes</a> ·
+      <a href="https://github.com/IgorBratti/sfmc-handbook/tree/main/ssjs">SSJS</a> ·
+      <a href="https://github.com/IgorBratti/sfmc-handbook/tree/main/sql">SQL library</a> ·
+      <a href="https://github.com/IgorBratti/sfmc-handbook/tree/main/playbooks">Playbooks</a> ·
+      <a href="https://github.com/IgorBratti/sfmc-handbook/tree/main/field-notes">Field notes</a>
+    </p>
+  </main>
+  <footer>MIT License · Igor Bratti · <a href="https://www.salesforce.com/trailblazer/igor-bratti">Trailblazer profile</a></footer>
+</body>
+</html>

@@ -1,0 +1,78 @@
+%%[
+/* Birthday page with a unique coupon per contact.
+   Link from the birthday email: RedirectTo(CloudPagesURL(2345, "sk", _subscriberkey))
+   ClaimRowValue gives this contact one unused coupon and marks it as claimed.
+   Opening the page again returns the same coupon, so it is safe to refresh. */
+
+VAR @sk, @firstName, @coupon, @expiresAt, @expires, @hasCoupon
+SET @sk = RequestParameter("sk")
+SET @hasCoupon = "false"
+
+IF NOT Empty(@sk) THEN
+  SET @firstName = Lookup("Customers_DE", "FirstName", "SubscriberKey", @sk)
+  SET @coupon = ClaimRowValue("Birthday_Coupons_DE", "CouponCode", "IsClaimed", "", "SubscriberKey", @sk)
+
+  IF NOT Empty(@coupon) THEN
+    SET @expiresAt = Lookup("Birthday_Coupons_DE", "ExpiresAt", "CouponCode", @coupon)
+    SET @expires = FormatDate(@expiresAt, "MMMM d, yyyy", "", "en-US")
+    SET @hasCoupon = "true"
+  ENDIF
+ENDIF
+
+IF Empty(@firstName) THEN
+  SET @firstName = "friend"
+ELSE
+  SET @firstName = ProperCase(@firstName)
+ENDIF
+]%%
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Happy birthday</title>
+  <style>
+    :root { --accent:#0b4f8a; --ink:#1c2128; --muted:#59636e; --bg:#eef1f4; --line:#d3dae2; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Arial, Helvetica, sans-serif; background:var(--bg); color:var(--ink); }
+    .wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px 16px; }
+    .card { background:#fff; width:100%; max-width:520px; border-radius:10px; padding:36px 32px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+    .brand { font-weight:bold; color:var(--accent); margin:0 0 24px; }
+    h1 { margin:0 0 12px; font-size:26px; line-height:1.25; }
+    p { margin:0 0 16px; line-height:1.55; color:var(--muted); }
+    .btn { display:inline-block; background:var(--accent); color:#fff; text-decoration:none; padding:12px 22px; border-radius:6px; font-weight:bold; border:0; font-size:16px; cursor:pointer; }
+    .btn.secondary { background:#fff; color:var(--accent); border:1px solid var(--accent); }
+    label { display:block; font-size:14px; font-weight:bold; margin:0 0 6px; }
+    input[type=text], input[type=email], input[type=tel], select { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:16px; margin:0 0 16px; }
+    .check { display:flex; gap:10px; align-items:flex-start; font-weight:normal; color:var(--muted); margin:0 0 14px; }
+    .msg { padding:12px 14px; border-radius:6px; margin:0 0 16px; font-size:14px; }
+    .msg.error { background:#fdecec; color:#8a1c1c; }
+    .msg.ok { background:#e8f5ec; color:#1d5e33; }
+    .hp { position:absolute; left:-9999px; }
+    .coupon { font-family:"Courier New", monospace; font-size:26px; letter-spacing:.08em; border:2px dashed var(--accent); border-radius:8px; padding:16px; text-align:center; color:var(--accent); margin:0 0 10px; }
+    .small { font-size:13px; color:var(--muted); }
+    .row { display:flex; gap:12px; flex-wrap:wrap; }
+    .row > div { flex:1 1 180px; }
+    .preview-bar { background:#1c2128; color:#fff; font-size:13px; text-align:center; padding:8px 12px; }
+    .preview-bar a { color:#9cc7ef; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <main class="card">
+      <p class="brand">BrandName</p>
+      <h1>Happy birthday, %%=v(@firstName)=%%!</h1>
+      %%[ IF @hasCoupon == "true" THEN ]%%
+        <p>To celebrate, here is a gift just for you: 20% off your next purchase.</p>
+        <div class="coupon">%%=v(@coupon)=%%</div>
+        <p class="small">Valid until %%=v(@expires)=%%. One use per customer.</p>
+        <a class="btn" href="https://example.com/shop">Use my gift</a>
+      %%[ ELSE ]%%
+        <p>We wish you a wonderful day. Keep an eye on your inbox: something special is coming.</p>
+        <a class="btn" href="https://example.com">Visit our website</a>
+      %%[ ENDIF ]%%
+    </main>
+  </div>
+</body>
+</html>
