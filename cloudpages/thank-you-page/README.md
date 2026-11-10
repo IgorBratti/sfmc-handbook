@@ -6,6 +6,7 @@
 
 | | |
 |---|---|
+| **Status** | Ready to test |
 | **Type** | CloudPage |
 | **Level** | Beginner |
 | **Stack** | AMPscript, HTML/CSS |

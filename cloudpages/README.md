@@ -2,12 +2,12 @@
 
 Ready-to-adapt CloudPages built with AMPscript. Each folder is a small technical sheet: what the page does, the data extensions it needs, how to set it up and the full code.
 
-| Page | What it shows | Live preview |
-|---|---|---|
-| [Thank-you page](thank-you-page/) | Personalized confirmation using encrypted parameters | [open](https://igorbratti.github.io/sfmc-handbook/cloudpages/thank-you-page/preview.html) |
-| [Birthday page](birthday-page/) | Personalized birthday message with a unique coupon (`ClaimRowValue`) | [open](https://igorbratti.github.io/sfmc-handbook/cloudpages/birthday-page/preview.html) |
-| [Lead capture form](lead-capture-form/) | Click-to-lead form: validation, honeypot, consent, UTM source, optional Sales Cloud lead | [open](https://igorbratti.github.io/sfmc-handbook/cloudpages/lead-capture-form/preview.html) |
-| [Preference center](preference-center/) | Topic preferences + "unsubscribe from all" with `LogUnsubEvent` | [open](https://igorbratti.github.io/sfmc-handbook/cloudpages/preference-center/preview.html) |
+| Page | What it shows | Status | Live preview |
+|---|---|---|---|
+| [Thank-you page](thank-you-page/) | Personalized confirmation using encrypted parameters | Ready to test | [open](https://igorbratti.github.io/sfmc-handbook/cloudpages/thank-you-page/preview.html) |
+| [Birthday page](birthday-page/) | Personalized birthday message with a unique coupon (`ClaimRowValue`) | Ready to test | [open](https://igorbratti.github.io/sfmc-handbook/cloudpages/birthday-page/preview.html) |
+| [Lead capture form](lead-capture-form/) | Click-to-lead form: validation, honeypot, consent, UTM source, optional Sales Cloud lead | Ready to test | [open](https://igorbratti.github.io/sfmc-handbook/cloudpages/lead-capture-form/preview.html) |
+| [Preference center](preference-center/) | Topic preferences + "unsubscribe from all" with `LogUnsubEvent` | Ready to test | [open](https://igorbratti.github.io/sfmc-handbook/cloudpages/preference-center/preview.html) |
 
 Previews use sample data. The real pages run AMPscript inside Marketing Cloud.
 

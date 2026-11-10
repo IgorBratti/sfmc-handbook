@@ -11,13 +11,18 @@ All queries run on standard Data Views or on placeholder data extensions (`Sourc
 | [kpis](kpis/) | `monthly-email-kpis.sql` | Sends, unique clicks, hard bounces and rates per month |
 | | `journey-email-performance.sql` | Sends, unique clicks and click rate per journey |
 | | `running-journeys.sql` | How many journeys are running right now |
+| | `unsubscribe-complaint-rates.sql` | Unsubscribe and spam complaint rates per month |
+| | `bounces-by-category-domain.sql` | Bounces by category and recipient domain |
+| | `best-send-time.sql` | Click rate by weekday and hour of send |
 | [hygiene](hygiene/) | `inactive-contacts.sql` | Contacts who received emails but never opened or clicked |
 | | `never-sent-contacts.sql` | Subscribers who never received an email |
+| [audiences](audiences/) | `frequency-cap.sql` | Audience minus contacts with 3+ emails in 7 days |
+| | `birthdays-today.sql` | Contacts whose birthday is today |
 | [scoring](scoring/) | `engagement-segments.sql` | Champion / Engaged / Passive / At risk segment per contact |
 | [patterns](patterns/) | `dedup-row-number.sql` | One row per key without mixing records |
 | | `build-exclusion-staging.sql` + `anti-join-staging.sql` | Fast exclusions on large audiences |
 
-Each folder has a README explaining the target data extension, the primary key and how to schedule it.
+Each folder has a README explaining the target data extension, the primary key and how to schedule it. Status of every query: **Ready to test** (see the status legend in the [main README](../README.md#status-labels)).
 
 ## Rules these queries follow
 

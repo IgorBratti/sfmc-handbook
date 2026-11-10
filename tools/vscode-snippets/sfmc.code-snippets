@@ -1,0 +1,221 @@
+{
+  "AMPscript block": {
+    "prefix": "amp-block",
+    "description": "AMPscript block with VAR and SET",
+    "body": [
+      "%%[",
+      "VAR @${1:name}",
+      "SET @${1:name} = ${2:value}",
+      "$0",
+      "]%%"
+    ],
+    "scope": "html,ampscript,plaintext"
+  },
+  "AMPscript Lookup": {
+    "prefix": "amp-lookup",
+    "description": "Lookup one value from a data extension",
+    "body": [
+      "SET @${1:value} = Lookup(\"${2:My_DE}\", \"${3:ReturnField}\", \"${4:SubscriberKey}\", ${5:_subscriberkey})"
+    ],
+    "scope": "html,ampscript,plaintext"
+  },
+  "AMPscript LookupOrderedRows loop": {
+    "prefix": "amp-rows",
+    "description": "Loop over the newest N rows of a data extension",
+    "body": [
+      "%%[",
+      "VAR @rows, @count, @i, @row",
+      "SET @rows = LookupOrderedRows(\"${1:My_DE}\", ${2:5}, \"${3:CreatedAt} DESC\", \"${4:SubscriberKey}\", ${5:_subscriberkey})",
+      "SET @count = RowCount(@rows)",
+      "IF @count > 0 THEN",
+      "  FOR @i = 1 TO @count DO",
+      "    SET @row = Row(@rows, @i)",
+      "    $0",
+      "  NEXT @i",
+      "ENDIF",
+      "]%%"
+    ],
+    "scope": "html,ampscript,plaintext"
+  },
+  "AMPscript fallback": {
+    "prefix": "amp-fallback",
+    "description": "Fallback for an empty attribute, with proper case",
+    "body": [
+      "%%[",
+      "VAR @${1:firstName}",
+      "SET @${1:firstName} = AttributeValue(\"${2:FirstName}\")",
+      "IF Empty(@${1:firstName}) THEN",
+      "  SET @${1:firstName} = \"${3:there}\"",
+      "ELSE",
+      "  SET @${1:firstName} = ProperCase(@${1:firstName})",
+      "ENDIF",
+      "]%%"
+    ],
+    "scope": "html,ampscript,plaintext"
+  },
+  "AMPscript local date": {
+    "prefix": "amp-date",
+    "description": "Local date formatted by culture",
+    "body": [
+      "%%=FormatDate(DateAdd(SystemDateToLocalDate(Now()), ${1:7}, \"D\"), \"${2:dd/MM/yyyy}\", \"\", \"${3:pt-BR}\")=%%"
+    ],
+    "scope": "html,ampscript,plaintext"
+  },
+  "AMPscript tracked link": {
+    "prefix": "amp-link",
+    "description": "Tracked link with encoded parameters",
+    "body": [
+      "%%[ SET @${1:url} = Concat(\"${2:https://example.com/page}\", \"?id=\", URLEncode(_subscriberkey, 1, 1)) ]%%",
+      "<a href=\"%%=RedirectTo(@${1:url})=%%\" alias=\"${3:cta}\">${4:Link text}</a>"
+    ],
+    "scope": "html,ampscript,plaintext"
+  },
+  "AMPscript CloudPagesURL": {
+    "prefix": "amp-cloudpage",
+    "description": "Link to a CloudPage with encrypted parameters",
+    "body": [
+      "<a href=\"%%=RedirectTo(CloudPagesURL(${1:1234}, \"sk\", _subscriberkey))=%%\">${2:Open page}</a>"
+    ],
+    "scope": "html,ampscript,plaintext"
+  },
+  "AMPscript RaiseError skip": {
+    "prefix": "amp-skip",
+    "description": "Skip the send for this contact when data is missing",
+    "body": [
+      "%%[",
+      "IF Empty(@${1:value}) THEN",
+      "  RaiseError(\"${2:Missing data}\", true)",
+      "ENDIF",
+      "]%%"
+    ],
+    "scope": "html,ampscript,plaintext"
+  },
+  "AMPscript CloudPage POST guard": {
+    "prefix": "amp-post",
+    "description": "Process a CloudPage form only on a real submission",
+    "body": [
+      "%%[",
+      "VAR @submitted",
+      "SET @submitted = RequestParameter(\"submitted\")",
+      "IF @submitted == \"1\" THEN",
+      "  $0",
+      "ENDIF",
+      "]%%",
+      "<form method=\"post\" action=\"%%=RequestParameter('PAGEURL')=%%\">",
+      "  <input type=\"hidden\" name=\"submitted\" value=\"1\">",
+      "  <button type=\"submit\">${1:Send}</button>",
+      "</form>"
+    ],
+    "scope": "html,ampscript,plaintext"
+  },
+  "AMPscript UpsertData": {
+    "prefix": "amp-upsert",
+    "description": "Insert or update one row",
+    "body": [
+      "UpsertData(\"${1:My_DE}\", 1, \"${2:SubscriberKey}\", ${3:@key}, \"${4:Field}\", ${5:@value}, \"UpdatedAt\", Now())"
+    ],
+    "scope": "html,ampscript,plaintext"
+  },
+  "AMPscript ClaimRowValue": {
+    "prefix": "amp-claim",
+    "description": "Assign one unused code (coupon) to this contact",
+    "body": [
+      "SET @${1:coupon} = ClaimRowValue(\"${2:Coupons_DE}\", \"${3:CouponCode}\", \"IsClaimed\", \"\", \"SubscriberKey\", ${4:_subscriberkey})"
+    ],
+    "scope": "html,ampscript,plaintext"
+  },
+  "SSJS block": {
+    "prefix": "ssjs-block",
+    "description": "Server-side JavaScript block",
+    "body": [
+      "<script runat=\"server\">",
+      "Platform.Load(\"core\", \"1.1.1\");",
+      "$0",
+      "</script>"
+    ],
+    "scope": "html,javascript,plaintext"
+  },
+  "SSJS try/catch log": {
+    "prefix": "ssjs-try",
+    "description": "try/catch that writes errors to a log data extension",
+    "body": [
+      "try {",
+      "  $0",
+      "} catch (e) {",
+      "  DataExtension.Init(\"${1:Error_Log_DE}\").Rows.Add({ Source: \"${2:Script_Name}\", Message: Stringify(e), CreatedAt: Now() });",
+      "}"
+    ],
+    "scope": "html,javascript,plaintext"
+  },
+  "SSJS WSProxy retrieve all": {
+    "prefix": "ssjs-retrieve",
+    "description": "Retrieve every row of a DE with WSProxy pagination",
+    "body": [
+      "var api = new Script.Util.WSProxy();",
+      "var objectType = \"DataExtensionObject[${1:My_DE}]\";",
+      "var res = api.retrieve(objectType, [${2:\"SubscriberKey\"}]);",
+      "var rows = [];",
+      "while (true) {",
+      "  for (var i = 0; i < res.Results.length; i++) {",
+      "    var props = res.Results[i].Properties, row = {};",
+      "    for (var p = 0; p < props.length; p++) { row[props[p].Name] = props[p].Value; }",
+      "    rows.push(row);",
+      "  }",
+      "  if (!res.HasMoreRows) break;",
+      "  res = api.getNextBatch(objectType, res.RequestID);",
+      "}"
+    ],
+    "scope": "html,javascript,plaintext"
+  },
+  "SQL dedup ROW_NUMBER": {
+    "prefix": "sql-dedup",
+    "description": "Keep the newest row per key",
+    "body": [
+      "SELECT x.${1:SubscriberKey}, x.${2:EmailAddress}",
+      "FROM (",
+      "    SELECT ${1:SubscriberKey}, ${2:EmailAddress},",
+      "           ROW_NUMBER() OVER (PARTITION BY ${1:SubscriberKey} ORDER BY ${3:UpdatedAt} DESC) AS rn",
+      "    FROM [${4:Source_DE}]",
+      ") x",
+      "WHERE x.rn = 1"
+    ],
+    "scope": "sql,plaintext"
+  },
+  "SQL anti-join": {
+    "prefix": "sql-anti",
+    "description": "Exclude keys found in a staging DE",
+    "body": [
+      "SELECT a.${1:SubscriberKey}",
+      "FROM [${2:Audience_DE}] a",
+      "LEFT JOIN [${3:Exclusion_Staging_DE}] e ON e.${1:SubscriberKey} = a.${1:SubscriberKey}",
+      "WHERE e.${1:SubscriberKey} IS NULL"
+    ],
+    "scope": "sql,plaintext"
+  },
+  "SQL frequency cap": {
+    "prefix": "sql-freqcap",
+    "description": "Remove contacts with N+ sends in the last D days",
+    "body": [
+      "SELECT a.SubscriberKey, a.EmailAddress",
+      "FROM [${1:Audience_DE}] a",
+      "LEFT JOIN (",
+      "    SELECT SubscriberKey FROM _Sent",
+      "    WHERE EventDate >= DATEADD(DAY, -${2:7}, GETDATE())",
+      "    GROUP BY SubscriberKey",
+      "    HAVING COUNT(*) >= ${3:3}",
+      ") f ON f.SubscriberKey = a.SubscriberKey",
+      "WHERE f.SubscriberKey IS NULL"
+    ],
+    "scope": "sql,plaintext"
+  },
+  "SQL last N days of a Data View": {
+    "prefix": "sql-recent",
+    "description": "Rows from a tracking Data View in the last N days",
+    "body": [
+      "SELECT SubscriberKey, JobID, EventDate",
+      "FROM ${1|_Sent,_Open,_Click,_Bounce,_Unsubscribe|}",
+      "WHERE EventDate >= DATEADD(DAY, -${2:30}, GETDATE())"
+    ],
+    "scope": "sql,plaintext"
+  }
+}

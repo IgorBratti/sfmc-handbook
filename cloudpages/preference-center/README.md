@@ -6,6 +6,7 @@
 
 | | |
 |---|---|
+| **Status** | Ready to test |
 | **Type** | CloudPage |
 | **Level** | Advanced |
 | **Stack** | AMPscript (`UpsertData`, `Lookup`, `LogUnsubEvent` via `InvokeExecute`), HTML/CSS |

@@ -6,6 +6,7 @@
 
 | | |
 |---|---|
+| **Status** | Ready to test |
 | **Type** | CloudPage + birthday journey |
 | **Level** | Intermediate |
 | **Stack** | AMPscript (`ClaimRowValue`, `Lookup`, `FormatDate`), HTML/CSS |

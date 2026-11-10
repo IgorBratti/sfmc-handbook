@@ -6,6 +6,7 @@
 
 | | |
 |---|---|
+| **Status** | Ready to test |
 | **Type** | CloudPage |
 | **Level** | Intermediate |
 | **Stack** | AMPscript (`UpsertData`, `IsEmailAddress`, `Redirect`, optional `CreateSalesforceObject`), HTML/CSS |
