@@ -1,18 +1,28 @@
 %%[
 /* Preference center with "unsubscribe from all"
-   Link from the email footer (parameters travel encrypted, so nobody can edit someone else's preferences):
-     RedirectTo(CloudPagesURL(3456, "sk", _subscriberkey, "jid", jobid, "lid", listid, "bid", _JobSubscriberBatchID))
+   Link from the email footer (see README). Parameters travel encrypted and the subscriber key is signed:
+     RedirectTo(CloudPagesURL(3456, "sk", _subscriberkey, "sig", @sig, "jid", jobid, "lid", listid, "bid", _JobSubscriberBatchID))
+   - Without a valid signature the page shows "This link is not valid" and does nothing (see ../../security.md).
    - "Save" updates topic preferences in Preferences_DE.
    - "Unsubscribe from all" clears every topic and logs a real unsubscribe with LogUnsubEvent,
-     tied to the email the contact came from (JobID, ListID, BatchID) for correct tracking.
+     tied to the email the contact came from (JobID, ListID, BatchID) so it appears in tracking.
+   - The result of LogUnsubEvent is checked; failures are logged to Error_Log_DE and the visitor sees a neutral message.
    The form posts back to the same URL, so the encrypted parameters stay with it. */
 
-VAR @sk, @jid, @lid, @bid, @action, @news, @offers, @events, @message, @lue, @prop, @statusCode, @statusMsg, @requestId
+VAR @sk, @sig, @secret, @jid, @lid, @bid, @action, @news, @offers, @events
+VAR @message, @messageType, @lue, @prop, @statusCode, @statusMsg, @requestId
+
 SET @sk  = RequestParameter("sk")
+SET @sig = RequestParameter("sig")
 SET @jid = RequestParameter("jid")
 SET @lid = RequestParameter("lid")
 SET @bid = RequestParameter("bid")
 SET @action = RequestParameter("action")
+
+SET @secret = Lookup("Config_DE", "Value", "Name", "LINK_SIGNING_SECRET")
+IF Empty(@sk) OR Empty(@secret) OR @sig != SHA256(Concat(@sk, "|", @secret), "UTF-8") THEN
+  SET @sk = ""
+ENDIF
 
 IF NOT Empty(@sk) THEN
 
@@ -23,6 +33,7 @@ IF NOT Empty(@sk) THEN
     UpsertData("Preferences_DE", 1, "SubscriberKey", @sk,
       "Newsletter", @news, "Offers", @offers, "Events", @events, "UpdatedAt", Now())
     SET @message = "Your preferences were saved."
+    SET @messageType = "ok"
 
   ELSEIF @action == "unsubscribe_all" THEN
     UpsertData("Preferences_DE", 1, "SubscriberKey", @sk,
@@ -63,7 +74,18 @@ IF NOT Empty(@sk) THEN
     AddObjectArrayItem(@lue, "Parameters", @prop)
 
     SET @statusCode = InvokeExecute(@lue, @statusMsg, @requestId)
-    SET @message = "You have been unsubscribed from all emails."
+
+    IF @statusCode == "OK" THEN
+      SET @message = "You have been unsubscribed from all emails."
+      SET @messageType = "ok"
+    ELSE
+      InsertData("Error_Log_DE",
+        "Source", "PreferenceCenter_LogUnsubEvent",
+        "Message", Concat(@statusCode, " | ", @statusMsg, " | ", @requestId),
+        "CreatedAt", Now())
+      SET @message = "We couldn't complete your request. Please try again in a few minutes."
+      SET @messageType = "error"
+    ENDIF
   ENDIF
 
   SET @news   = Lookup("Preferences_DE", "Newsletter", "SubscriberKey", @sk)
@@ -79,7 +101,7 @@ ENDIF
   <meta name="robots" content="noindex">
   <title>Email preferences</title>
   <style>
-    :root { --accent:#0b4f8a; --ink:#1c2128; --muted:#59636e; --bg:#eef1f4; --line:#d3dae2; }
+    :root { --accent:#0b4f8a; --ink:#1c2128; --muted:#59636e; --bg:#eef1f4; }
     * { box-sizing:border-box; }
     body { margin:0; font-family:Arial, Helvetica, sans-serif; background:var(--bg); color:var(--ink); }
     .wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px 16px; }
@@ -89,19 +111,11 @@ ENDIF
     p { margin:0 0 16px; line-height:1.55; color:var(--muted); }
     .btn { display:inline-block; background:var(--accent); color:#fff; text-decoration:none; padding:12px 22px; border-radius:6px; font-weight:bold; border:0; font-size:16px; cursor:pointer; }
     .btn.secondary { background:#fff; color:var(--accent); border:1px solid var(--accent); }
-    label { display:block; font-size:14px; font-weight:bold; margin:0 0 6px; }
-    input[type=text], input[type=email], input[type=tel], select { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:6px; font-size:16px; margin:0 0 16px; }
-    .check { display:flex; gap:10px; align-items:flex-start; font-weight:normal; color:var(--muted); margin:0 0 14px; }
+    .check { display:flex; gap:10px; align-items:flex-start; color:var(--muted); margin:0 0 14px; font-size:15px; }
     .msg { padding:12px 14px; border-radius:6px; margin:0 0 16px; font-size:14px; }
     .msg.error { background:#fdecec; color:#8a1c1c; }
     .msg.ok { background:#e8f5ec; color:#1d5e33; }
-    .hp { position:absolute; left:-9999px; }
-    .coupon { font-family:"Courier New", monospace; font-size:26px; letter-spacing:.08em; border:2px dashed var(--accent); border-radius:8px; padding:16px; text-align:center; color:var(--accent); margin:0 0 10px; }
-    .small { font-size:13px; color:var(--muted); }
-    .row { display:flex; gap:12px; flex-wrap:wrap; }
-    .row > div { flex:1 1 180px; }
-    .preview-bar { background:#1c2128; color:#fff; font-size:13px; text-align:center; padding:8px 12px; }
-    .preview-bar a { color:#9cc7ef; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; margin-top:20px; }
   </style>
 </head>
 <body>
@@ -116,16 +130,16 @@ ENDIF
         <p>Choose what you want to receive. You can change this anytime.</p>
 
         %%[ IF NOT Empty(@message) THEN ]%%
-          <div class="msg ok">%%=v(@message)=%%</div>
+          <div class="msg %%=v(@messageType)=%%" role="status">%%=v(@message)=%%</div>
         %%[ ENDIF ]%%
 
         <form method="post" action="%%=RequestParameter('PAGEURL')=%%">
           <label class="check"><input type="checkbox" name="newsletter" %%=IIF(Lowercase(@news) == "true", "checked", "")=%%> <span><strong>Newsletter</strong><br>Monthly news and tips.</span></label>
           <label class="check"><input type="checkbox" name="offers" %%=IIF(Lowercase(@offers) == "true", "checked", "")=%%> <span><strong>Offers</strong><br>Discounts and promotions.</span></label>
           <label class="check"><input type="checkbox" name="events" %%=IIF(Lowercase(@events) == "true", "checked", "")=%%> <span><strong>Events</strong><br>Webinars and invitations.</span></label>
-          <div class="row" style="margin-top:20px;">
-            <div><button class="btn" type="submit" name="action" value="save">Save preferences</button></div>
-            <div><button class="btn secondary" type="submit" name="action" value="unsubscribe_all">Unsubscribe from all</button></div>
+          <div class="row">
+            <button class="btn" type="submit" name="action" value="save">Save preferences</button>
+            <button class="btn secondary" type="submit" name="action" value="unsubscribe_all">Unsubscribe from all</button>
           </div>
         </form>
       %%[ ENDIF ]%%
