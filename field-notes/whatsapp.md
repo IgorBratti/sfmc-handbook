@@ -1,5 +1,7 @@
 # WhatsApp (Meta) in Marketing Cloud
 
+> **Type:** Field notes · Problem → why → fix. Related: [Journey Builder guide](../journey-builder/#2-data-in-a-journey).
+
 [← Back to contents](README.md)
 
 ## 1. Template variables come from Journey Data
@@ -31,3 +33,5 @@
 **Problem:** WhatsApp sends don't show up in `_SMSMessageTracking`.
 
 **Fix:** use the Chat Messaging data extract for WhatsApp delivery and engagement data.
+
+[← Back to contents](README.md)

@@ -1,0 +1,16 @@
+# Secrets: never commit
+.env
+*.env
+!.env.example
+
+# Data exports: never commit client data
+*.csv
+*.xlsx
+exports/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/*
+!.vscode/*.code-snippets

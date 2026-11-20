@@ -1,6 +1,6 @@
 # VS Code snippets for Marketing Cloud
 
-18 snippets for AMPscript, SSJS and SQL. Type the prefix, press **Tab**, and fill in the highlighted fields (Tab jumps to the next one).
+24 snippets for AMPscript, SSJS and SQL. Type the prefix, press **Tab**, and fill in the highlighted fields (Tab jumps to the next one).
 
 Status: **Ready to test**.
 
@@ -15,6 +15,8 @@ Copy `sfmc.code-snippets` into the project's `.vscode/` folder.
 
 ## Snippets
 
+### AMPscript
+
 | Prefix | Inserts |
 |---|---|
 | `amp-block` | AMPscript block with `VAR` and `SET` |
@@ -23,18 +25,34 @@ Copy `sfmc.code-snippets` into the project's `.vscode/` folder.
 | `amp-fallback` | Fallback for an empty attribute, with proper case |
 | `amp-date` | Local date formatted by culture |
 | `amp-link` | Tracked link with encoded parameter |
-| `amp-cloudpage` | Link to a CloudPage with encrypted parameters |
+| `amp-cloudpage` | Link to a CloudPage with encrypted (non-identity) parameters |
+| `amp-signed-link` | Link to a CloudPage with subscriber key + signature |
+| `amp-verify-sig` | CloudPage: accept `sk` only with a valid signature |
+| `amp-allow` | Allow-list a request value with `RegExMatch` |
 | `amp-skip` | `RaiseError` that skips the send for one contact |
 | `amp-post` | CloudPage form processed only on real submissions |
 | `amp-upsert` | `UpsertData` with `UpdatedAt` |
 | `amp-claim` | `ClaimRowValue` to assign a coupon |
-| `ssjs-block` | SSJS block with `Platform.Load` |
-| `ssjs-try` | `try/catch` writing to an error log DE |
+
+### SSJS
+
+| Prefix | Inserts |
+|---|---|
+| `ssjs-block` | SSJS block with `Platform.Load("core", "1.1.5")` |
+| `ssjs-try` | `try/catch` that logs to an error DE and re-throws |
 | `ssjs-retrieve` | WSProxy retrieve with pagination |
+| `ssjs-http` | `Script.Util.HttpRequest` with JSON body and status check |
+
+### SQL
+
+| Prefix | Inserts |
+|---|---|
 | `sql-dedup` | Deduplication with `ROW_NUMBER` |
 | `sql-anti` | Anti-join against a staging DE |
 | `sql-freqcap` | Frequency capping on an audience |
 | `sql-recent` | Last N days of a tracking Data View |
+| `sql-today-local` | Today's date in Brasília time |
+| `sql-journey-join` | Tracking Data View joined to its journey |
 
 ## Where they work
 

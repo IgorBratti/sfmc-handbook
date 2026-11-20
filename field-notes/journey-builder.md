@@ -1,5 +1,7 @@
 # Journey Builder
 
+> **Type:** Field notes · Problem → why → fix. Full guide: [Journey Builder](../journey-builder/).
+
 [← Back to contents](README.md)
 
 ## 1. Exit Criteria is not continuous
@@ -32,3 +34,5 @@ SELECT j.JourneyID, MAX(j.JourneyName) AS JourneyName, COUNT(DISTINCT j.VersionI
 FROM _Journey j
 GROUP BY j.JourneyID
 ```
+
+[← Back to contents](README.md)

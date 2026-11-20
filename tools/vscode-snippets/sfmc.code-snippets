@@ -72,9 +72,9 @@
   },
   "AMPscript CloudPagesURL": {
     "prefix": "amp-cloudpage",
-    "description": "Link to a CloudPage with encrypted parameters",
+    "description": "Link to a CloudPage with encrypted (non-identity) parameters. For identities use amp-signed-link",
     "body": [
-      "<a href=\"%%=RedirectTo(CloudPagesURL(${1:1234}, \"sk\", _subscriberkey))=%%\">${2:Open page}</a>"
+      "<a href=\"%%=RedirectTo(CloudPagesURL(${1:1234}, \"${2:campaign}\", \"${3:value}\"))=%%\" alias=\"${4:cta}\">${5:Open page}</a>"
     ],
     "scope": "html,ampscript,plaintext"
   },
@@ -129,7 +129,7 @@
     "description": "Server-side JavaScript block",
     "body": [
       "<script runat=\"server\">",
-      "Platform.Load(\"core\", \"1.1.1\");",
+      "Platform.Load(\"core\", \"1.1.5\");",
       "$0",
       "</script>"
     ],
@@ -137,12 +137,14 @@
   },
   "SSJS try/catch log": {
     "prefix": "ssjs-try",
-    "description": "try/catch that writes errors to a log data extension",
+    "description": "try/catch that logs to a DE and re-throws so the Automation still fails",
     "body": [
       "try {",
       "  $0",
       "} catch (e) {",
-      "  DataExtension.Init(\"${1:Error_Log_DE}\").Rows.Add({ Source: \"${2:Script_Name}\", Message: Stringify(e), CreatedAt: Now() });",
+      "  var msg = String(Stringify(e)).substring(0, 3990);",
+      "  try { DataExtension.Init(\"${1:Error_Log_DE}\").Rows.Add({ Source: \"${2:Script_Name}\", Message: msg, CreatedAt: Platform.Function.Now() }); } catch (logErr) {}",
+      "  throw e;",
       "}"
     ],
     "scope": "html,javascript,plaintext"
@@ -217,5 +219,79 @@
       "WHERE EventDate >= DATEADD(DAY, -${2:30}, GETDATE())"
     ],
     "scope": "sql,plaintext"
+  },
+  "AMPscript signed CloudPage link": {
+    "prefix": "amp-signed-link",
+    "scope": "html,ampscript,plaintext",
+    "description": "CloudPagesURL with subscriber key + SHA256 signature",
+    "body": [
+      "%%[",
+      "SET @secret = Lookup(\"Config_DE\", \"Value\", \"Name\", \"LINK_SIGNING_SECRET\")",
+      "SET @sig = SHA256(Concat(_subscriberkey, \"|\", @secret), \"UTF-8\")",
+      "]%%",
+      "<a href=\"%%=RedirectTo(CloudPagesURL(${1:1234}, \"sk\", _subscriberkey, \"sig\", @sig))=%%\" alias=\"${2:cta}\">${3:Open}</a>"
+    ]
+  },
+  "AMPscript verify signature": {
+    "prefix": "amp-verify-sig",
+    "scope": "html,ampscript,plaintext",
+    "description": "On a CloudPage: accept sk only with a valid signature",
+    "body": [
+      "%%[",
+      "SET @sk = RequestParameter(\"sk\")",
+      "SET @secret = Lookup(\"Config_DE\", \"Value\", \"Name\", \"LINK_SIGNING_SECRET\")",
+      "IF Empty(@sk) OR Empty(@secret) OR RequestParameter(\"sig\") != SHA256(Concat(@sk, \"|\", @secret), \"UTF-8\") THEN",
+      "  SET @sk = \"\"",
+      "ENDIF",
+      "]%%"
+    ]
+  },
+  "AMPscript allow-list": {
+    "prefix": "amp-allow",
+    "scope": "html,ampscript,plaintext",
+    "description": "Allow-list a request value before printing or storing it",
+    "body": [
+      "SET @${1:value} = RegExMatch(RequestParameter(\"${2:param}\"), \"^[A-Za-z0-9_.-]{1,50}\\$\", 0)",
+      "IF Empty(@${1:value}) THEN SET @${1:value} = \"${3:default}\" ENDIF"
+    ]
+  },
+  "SSJS HttpRequest JSON": {
+    "prefix": "ssjs-http",
+    "scope": "html,javascript,plaintext",
+    "description": "Script.Util.HttpRequest with JSON body and status check",
+    "body": [
+      "var req = new Script.Util.HttpRequest(\"${1:https://api.example.com/v1/items}\");",
+      "req.emptyContentHandling = 0;",
+      "req.retries = 1;",
+      "req.continueOnError = true;",
+      "req.method = \"${2|POST,GET,PUT,PATCH,DELETE|}\";",
+      "req.contentType = \"application/json\";",
+      "req.setHeader(\"Authorization\", \"Bearer \" + ${3:token});",
+      "req.postData = Stringify(${4:payload});",
+      "var resp = req.send();",
+      "var status = Number(resp.statusCode);",
+      "var body = Platform.Function.ParseJSON(String(resp.content));",
+      "$0"
+    ]
+  },
+  "SQL today in Brasilia": {
+    "prefix": "sql-today-local",
+    "scope": "sql,plaintext",
+    "description": "Today's date in Brasília time (server is UTC-6)",
+    "body": [
+      "CAST(DATEADD(HOUR, ${1:3}, GETDATE()) AS DATE)"
+    ]
+  },
+  "SQL tracking with journey": {
+    "prefix": "sql-journey-join",
+    "scope": "sql,plaintext",
+    "description": "Join a tracking Data View to its journey",
+    "body": [
+      "SELECT j.JourneyID, j.JourneyName, ${1:s}.SubscriberKey, ${1:s}.EventDate",
+      "FROM ${2|_Sent,_Open,_Click,_Bounce,_Unsubscribe|} ${1:s}",
+      "INNER JOIN _JourneyActivity ja ON ja.JourneyActivityObjectID = ${1:s}.TriggererSendDefinitionObjectID",
+      "INNER JOIN _Journey j ON j.VersionID = ja.VersionID",
+      "WHERE ${1:s}.EventDate >= DATEADD(DAY, -${3:30}, GETDATE())"
+    ]
   }
 }

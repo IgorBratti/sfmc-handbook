@@ -2,85 +2,94 @@
 
 [English](README.md) | **Português**
 
-Material prático e pronto para usar de **Salesforce Marketing Cloud Engagement**: CloudPages, e-mails, AMPscript, SSJS, SQL, playbooks de ponta a ponta e as pegadinhas que aprendi a evitar no dia a dia.
+Uma referência prática de **Salesforce Marketing Cloud Engagement**: AMPscript, Server-Side JavaScript, SQL e Data Views, e-mails, CloudPages, APIs, Journey Builder, Automation Studio e playbooks de ponta a ponta. Tabelas de referência para consulta, guias que explicam como as coisas funcionam e código pronto para usar, construído do jeito que eu construo em produção.
 
 **Prévias ao vivo:** https://igorbratti.github.io/sfmc-handbook/
 
 Tudo aqui é genérico. Nenhum dado ou código de cliente: nomes como `Customers_DE` ou `Leads_DE` são exemplos que você troca pelos seus objetos reais.
 
-> As fichas técnicas e os códigos estão em inglês, a língua padrão da documentação da Salesforce. Esta página resume o conteúdo em português.
+> Os guias, as fichas técnicas e os códigos estão em inglês, a língua padrão da documentação da Salesforce. Esta página resume o conteúdo em português.
+
+## Seções
+
+| Seção | Referência | Guias | Biblioteca |
+|---|---|---|---|
+| [**AMPscript**](ampscript/) | [Sintaxe](ampscript/syntax.md) · [Funções](ampscript/functions.md) · [Personalization strings](ampscript/personalization-strings.md) | [Gravação em DEs](ampscript/data-writes.md) · [Content blocks](ampscript/content-blocks.md) · [Debug](ampscript/debugging.md) | Receitas: personalização, datas, lookups, links, textos, controle de envio |
+| [**JavaScript**](javascript/) | [Referência de SSJS](javascript/ssjs/reference.md) | [Fundamentos de SSJS](javascript/ssjs/fundamentals.md) · [WSProxy](javascript/ssjs/wsproxy.md) · [HTTP e APIs](javascript/ssjs/http-and-apis.md) · [Client-side](javascript/client-side/) | [Scripts SSJS](javascript/ssjs/scripts/) · [scripts de navegador](javascript/client-side/) |
+| [**SQL & Data Views**](sql/) | [Data Views](sql/data-views.md) · [Query Activity](sql/query-activity.md) | [Datas e fusos horários](sql/dates-and-time-zones.md) | KPIs, públicos, higienização, scoring, monitoramento, padrões |
+| [**E-mails**](emails/) | — | [Renderização](emails/rendering-guide.md) · [Entregabilidade](emails/deliverability.md) · [Content Builder](emails/content-builder-guide.md) · [AMP](emails/amp/) | Template base, blocos, exemplos com AMPscript |
+| [**CloudPages**](cloudpages/) | — | [Guia de segurança](cloudpages/security.md) | Formulário de leads, central de preferências, página de aniversário, página de agradecimento |
+| [**APIs**](apis/) | [REST](apis/rest-reference.md) · [SOAP](apis/soap-reference.md) | [Autenticação e pacotes](apis/README.md) | — |
+| [**Journey Builder**](journey-builder/) | — | [Guia de design](journey-builder/) | — |
+| [**Automation Studio**](automation-studio/) | — | [Guia de design](automation-studio/) | — |
+| [**Playbooks**](playbooks/) | — | — | Limpeza de contatos · Lançamento de jornada · Alertas de falha de automação |
+| [**Field notes**](field-notes/) | — | Problemas, causas e soluções de projetos reais | — |
+| [**Ferramentas**](tools/vscode-snippets/) | — | — | 24 snippets de VS Code para AMPscript, SSJS e SQL |
 
 ## Como eu faço…?
 
 | Pergunta | Resposta |
 |---|---|
-| …capturar leads numa CloudPage, com consentimento e anti-spam? | [Formulário de captura de leads](cloudpages/lead-capture-form/) |
+| …capturar leads numa CloudPage, com consentimento, anti-spam e atribuição? | [Formulário de captura de leads](cloudpages/lead-capture-form/) |
+| …impedir que alguém abra a CloudPage de outra pessoa editando a URL? | [Links assinados](cloudpages/security.md#1-sign-every-link-that-carries-an-identity) |
 | …criar uma central de preferências que registra descadastros reais? | [Central de preferências](cloudpages/preference-center/) |
-| …dar um cupom único para cada contato? | [Página de aniversário](cloudpages/birthday-page/) |
-| …passar dados para uma CloudPage com segurança? | [Links e CloudPages](ampscript/links-and-cloudpages.md) |
+| …dar um cupom único para cada contato? | [Página de aniversário](cloudpages/birthday-page/) · [ClaimRowValue](ampscript/data-writes.md#claim-a-unique-value-coupons-codes) |
+| …consultar a assinatura de uma função de AMPscript? | [Funções de AMPscript](ampscript/functions.md) |
 | …cancelar o envio para um contato quando falta dado? | [Controle de envio](ampscript/send-control.md) |
-| …ler mais de 2.000 linhas de uma Data Extension? | [Retrieve com WSProxy](ssjs/wsproxy-retrieve-all.ssjs) |
-| …registrar erros de uma Script Activity? | [Log de erros](ssjs/try-catch-log.ssjs) |
+| …escolher conteúdo por segmento sem editar o e-mail toda vez? | [Content blocks](ampscript/content-blocks.md#many-variants-a-mapping-de) |
+| …saber quais campos cada Data View tem e como juntar? | [Referência de Data Views](sql/data-views.md) |
+| …evitar que "hoje" vire "ontem" nas queries? | [Datas e fusos horários](sql/dates-and-time-zones.md) |
+| …ler mais de 2.000 linhas de uma Data Extension em SSJS? | [Retrieve com WSProxy](javascript/ssjs/scripts/wsproxy-retrieve-all.ssjs) |
+| …fazer upsert de milhares de linhas numa Script Activity? | [Upsert em lote com WSProxy](javascript/ssjs/scripts/wsproxy-upsert-batch.ssjs) |
+| …chamar a API REST do Marketing Cloud a partir do SSJS? | [REST via SSJS](javascript/ssjs/scripts/rest-api-request.ssjs) |
+| …disparar evento de entrada de jornada ou e-mail transacional por API? | [Referência REST](apis/rest-reference.md) |
+| …criar um endpoint JSON para código no navegador? | [Code Resource JSON](javascript/ssjs/scripts/json-endpoint.ssjs) + [fetch-json.js](javascript/client-side/fetch-json.js) |
 | …deduplicar uma Data Extension sem misturar registros? | [Padrões](sql/patterns/) |
 | …excluir contatos rápido em públicos de milhões de linhas? | [Anti-join com staging](sql/patterns/) |
 | …limitar quantos e-mails um contato recebe por semana? | [Frequency cap](sql/audiences/) |
-| …encontrar contatos inativos? | [Queries de higienização](sql/hygiene/) |
 | …ver envios e cliques por jornada? | [KPIs](sql/kpis/) |
-| …descobrir o melhor dia e horário de envio? | [Melhor horário](sql/kpis/) |
-| …acompanhar taxas de descadastro e reclamação? | [KPIs](sql/kpis/) |
-| …fazer um botão que funciona no Outlook? | [Botão à prova de Outlook](emails/blocks/button.html) |
+| …descobrir que uma automação falhou antes do negócio? | [Queries de monitoramento](sql/monitoring/) · [Playbook de alertas](playbooks/automation-failure-alerts/) |
+| …fazer um e-mail funcionar no Outlook e no modo escuro? | [Guia de renderização](emails/rendering-guide.md) |
+| …manter os e-mails fora do spam? | [Guia de entregabilidade](emails/deliverability.md) |
 | …limpar contatos com segurança? | [Playbook de limpeza](playbooks/contact-cleanup/) |
-| …corrigir uma query que falha com `WITH`? | [Field notes: SQL](field-notes/sql.md) |
-| …escrever AMPscript mais rápido no VS Code? | [Snippets para VS Code](tools/vscode-snippets/) |
+| …lançar uma jornada sem surpresas? | [Playbook de lançamento de jornada](playbooks/journey-launch/) |
 
-## O que tem aqui
+## Como o conteúdo está organizado
 
-| Seção | O que você encontra | Destaques |
-|---|---|---|
-| [**CloudPages**](cloudpages/) | Páginas completas, com ficha técnica e prévia ao vivo | Formulário de captura de leads · Central de preferências com `LogUnsubEvent` · Página de aniversário com cupom único · Página de agradecimento |
-| [**E-mails**](emails/) | Templates e blocos responsivos, compatíveis com Outlook | Template-base · Botão à prova de Outlook · Rodapé de compliance · E-mails AMP |
-| [**AMPscript**](ampscript/) | Receitas curtas por tema | Personalização · Datas · Lookups e loops · Links e CloudPages · Textos e números · Controle de envio |
-| [**SSJS**](ssjs/) | Scripts para CloudPages e Script Activities | Paginação com WSProxy · Log de erros |
-| [**SQL**](sql/) | Biblioteca de queries sobre Data Views e Data Extensions | KPIs de e-mail · Performance por jornada · Melhor horário · Frequency cap · Contatos inativos · Segmentos de engajamento |
-| [**Playbooks**](playbooks/) | Processos de ponta a ponta, passo a passo | Limpeza de contatos |
-| [**Tools**](tools/vscode-snippets/) | Ferramentas para o dia a dia | Snippets de AMPscript, SSJS e SQL para VS Code |
-| [**Field notes**](field-notes/) | Problemas, causas e soluções de projetos reais | Limites da Query Activity · Comportamento do Journey Builder · Templates de WhatsApp |
-
-## Como cada item é organizado
-
-```
-<seção>/<nome-do-item>/
-  README.md      Ficha técnica: caso de uso, funcionamento, Data Extensions, configuração, código principal, testes e segurança
-  src/           Código completo, pronto para colar no Marketing Cloud
-  preview.html   Prévia estática com dados fictícios (publicada no GitHub Pages)
-```
-
-Temas menores (receitas de AMPscript, field notes) ficam num único arquivo Markdown por tema.
-
-## Selos de status
-
-Cada CloudPage, query, script e playbook mostra um destes selos:
-
-| Selo | Significado |
+| Tipo | O que é |
 |---|---|
-| **Tested** | Testado de ponta a ponta numa org real do Marketing Cloud |
-| **Ready to test** | Completo e revisado, ainda não testado de ponta a ponta numa org real |
+| **Reference** | Tabelas para consulta rápida |
+| **Guide** | Como algo funciona e como decidir |
+| **Recipe** | Trechos curtos, prontos para copiar, sobre um tema |
+| **Library item** | Artefato completo e documentado (ficha técnica + código + prévia) |
+| **Playbook** | Processo de ponta a ponta, com passos, verificações e riscos |
+| **Field note** | Problema → causa → solução |
+
+## Status
+
+| Rótulo | Significado |
+|---|---|
+| **Tested** | Executado de ponta a ponta numa org real do Marketing Cloud |
+| **Ready to test** | Completo e revisado, ainda não executado de ponta a ponta numa org real |
 | **Draft** | Em construção |
 
 ## Convenções
 
-- **Nomes:** pastas e arquivos em minúsculas, com hífen (`lead-capture-form`, `monthly-email-kpis.sql`). As Data Extensions dos exemplos usam `PascalCase_DE`.
-- **Segurança em primeiro lugar:** `CloudPagesURL` para parâmetros, gravação só em envios reais de formulário, nenhuma credencial no código.
-- **SQL:** sem CTEs e sem comentários dentro dos arquivos `.sql`, para que toda query rode em Query Activities e no Query Studio.
+- **Nomes:** minúsculas com hífen em pastas e arquivos. Data Extensions nos exemplos usam `PascalCase_DE`; ativos do Marketing Cloud usam `<BU>_<TIPO>_<OBJETIVO>_<DETALHE>_<VERSÃO>`.
+- **Segurança em primeiro lugar:** parâmetros de identidade assinados, saída validada por allow-list, gravação só em envios reais de formulário, segredos em Data Extensions restritas e nunca no código.
+- **SQL:** sem CTEs e sem comentários dentro dos `.sql`, para rodar em Query Activities e no Query Studio. Fusos horários explícitos.
+- **SSJS:** ECMAScript 3 no servidor; JavaScript moderno só no navegador.
+
+Mais detalhes em [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Sobre mim
 
-**Igor Bratti**, especialista em Salesforce Marketing Cloud, com 5 anos de experiência em CRM e marketing digital.
-Certificado Salesforce Marketing Cloud Engagement Administrator, Specialist e Developer.
+**Igor Bratti**, especialista em Salesforce Marketing Cloud com 5 anos em CRM e marketing digital.
+Salesforce Certified Marketing Cloud Engagement Administrator, Specialist e Developer.
 
-[LinkedIn](https://www.linkedin.com/in/igor-bratti/) · [Perfil no Trailblazer](https://www.salesforce.com/trailblazer/igor-bratti)
+[LinkedIn](https://www.linkedin.com/in/igor-bratti/) · [Perfil Trailblazer](https://www.salesforce.com/trailblazer/igor-bratti)
 
-Encontrou um erro ou tem uma solução melhor? Abra uma issue. O que mudou e quando: [CHANGELOG](CHANGELOG.md).
+Encontrou um erro ou tem uma abordagem melhor? Abra uma issue. O que mudou e quando: [CHANGELOG](CHANGELOG.md).
 
 ---
-Licença MIT. Use, adapte e compartilhe.
+Licença MIT. Use, adapte, compartilhe.
