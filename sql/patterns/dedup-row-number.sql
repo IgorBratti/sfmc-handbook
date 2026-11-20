@@ -4,7 +4,7 @@ SELECT x.SubscriberKey,
        x.UpdatedAt
 FROM (
     SELECT SubscriberKey, EmailAddress, Phone, UpdatedAt,
-           ROW_NUMBER() OVER (PARTITION BY SubscriberKey ORDER BY UpdatedAt DESC) AS rn
+           ROW_NUMBER() OVER (PARTITION BY SubscriberKey ORDER BY UpdatedAt DESC, EmailAddress ASC) AS rn
     FROM [Source_DE]
 ) x
 WHERE x.rn = 1
