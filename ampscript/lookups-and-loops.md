@@ -1,6 +1,8 @@
 # Lookups and loops
 
-[← AMPscript recipes](README.md)
+> **Type:** Recipes · Reading one value, several rows, ordered rows and building lists.
+
+[← AMPscript](README.md)
 
 ## One value
 ```ampscript
@@ -23,7 +25,7 @@ SET @count = RowCount(@rows)
 </ul>
 %%[ ENDIF ]%%
 ```
-Keep the count small. `LookupRows` stops at about 2,000 rows; for large sets use SSJS with WSProxy (see [ssjs](../ssjs/)).
+Keep the count small. `LookupRows` stops at about 2,000 rows; for large sets use SSJS with WSProxy (see [WSProxy](../javascript/ssjs/wsproxy.md)).
 
 ## Build a comma-separated list
 ```ampscript
@@ -43,3 +45,5 @@ Your interests: %%=v(@list)=%%
 ```ampscript
 %%[ SET @price = Lookup("Prices_DE", "Price", "ProductId", @productId, "Region", @region) ]%%
 ```
+
+[← AMPscript](README.md)

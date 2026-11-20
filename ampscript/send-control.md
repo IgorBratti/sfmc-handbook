@@ -1,6 +1,8 @@
 # Send control
 
-[← AMPscript recipes](README.md)
+> **Type:** Recipes · Skipping one subscriber, or stopping a send, when data is missing.
+
+[← AMPscript](README.md)
 
 ## Skip the send for one contact with `RaiseError`
 
@@ -36,3 +38,5 @@ Your coupon: %%=v(@coupon)=%%
 ## Test before sending
 - In **Preview and Test**, preview a contact that should be skipped: the preview reports the error for that contact instead of rendering the email.
 - Send a test to a small list mixing contacts with and without the data, and confirm only the right ones received it.
+
+[← AMPscript](README.md)

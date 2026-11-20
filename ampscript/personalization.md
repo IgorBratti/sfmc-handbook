@@ -1,6 +1,8 @@
 # Personalization
 
-[← AMPscript recipes](README.md)
+> **Type:** Recipes · Fallbacks, proper case, content by segment and hiding empty blocks.
+
+[← AMPscript](README.md)
 
 ## Fallback for empty fields
 ```ampscript
@@ -49,3 +51,5 @@ Pair it with the [engagement segments query](../sql/scoring/) to fill `Segment`.
   <p>Your coupon: <strong>%%=v(AttributeValue("CouponCode"))=%%</strong></p>
 %%[ ENDIF ]%%
 ```
+
+[← AMPscript](README.md)
