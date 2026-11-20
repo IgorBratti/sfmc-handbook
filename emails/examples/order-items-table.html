@@ -1,0 +1,52 @@
+%%[
+/* Order summary rendered from a data extension (one row per item), for order confirmation
+   or abandoned-cart emails.
+   Order_Items_DE: OrderId (Text 50), SubscriberKey (Text 254), ProductName (Text 200),
+                   Quantity (Number), UnitPrice (Decimal 10,2), ImageUrl (Text 500), LineNumber (Number)
+   - LookupOrderedRows with an explicit count keeps the email small (Gmail clips at ~102 KB).
+   - If there are no items, the subscriber is skipped instead of receiving an empty order. */
+
+VAR @orderId, @items, @count, @i, @row, @qty, @price, @lineTotal, @total
+SET @orderId = AttributeValue("OrderId")
+SET @items = LookupOrderedRows("Order_Items_DE", 10, "LineNumber ASC", "OrderId", @orderId, "SubscriberKey", _subscriberkey)
+SET @count = RowCount(@items)
+SET @total = 0
+
+IF @count == 0 THEN
+  RaiseError(Concat("No items for order ", @orderId), true)
+ENDIF
+]%%
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:Arial, Helvetica, sans-serif;">
+  <tr>
+    <td style="padding:0 40px 8px 40px; font-size:18px; font-weight:bold; color:#1c2128;">Your order %%=v(@orderId)=%%</td>
+  </tr>
+  <tr>
+    <td style="padding:0 40px 24px 40px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        %%[ FOR @i = 1 TO @count DO
+              SET @row = Row(@items, @i)
+              SET @qty = Field(@row, "Quantity")
+              SET @price = Field(@row, "UnitPrice")
+              SET @lineTotal = Multiply(@qty, @price)
+              SET @total = Add(@total, @lineTotal) ]%%
+        <tr>
+          <td width="64" valign="top" style="padding:12px 12px 12px 0; border-bottom:1px solid #e3e7ec;">
+            <img src="%%=v(Field(@row, 'ImageUrl'))=%%" width="64" height="64" alt="" border="0" style="display:block; border:0; border-radius:4px;">
+          </td>
+          <td valign="top" style="padding:12px 0; border-bottom:1px solid #e3e7ec; font-size:14px; line-height:20px; color:#1c2128;">
+            %%=v(Field(@row, 'ProductName'))=%%<br>
+            <span style="color:#6b7580;">Qty %%=v(@qty)=%% · %%=FormatCurrency(@price, "pt-BR")=%%</span>
+          </td>
+          <td align="right" valign="top" style="padding:12px 0 12px 12px; border-bottom:1px solid #e3e7ec; font-size:14px; font-weight:bold; color:#1c2128; white-space:nowrap;">
+            %%=FormatCurrency(@lineTotal, "pt-BR")=%%
+          </td>
+        </tr>
+        %%[ NEXT @i ]%%
+        <tr>
+          <td colspan="2" style="padding:16px 0 0 0; font-size:15px; font-weight:bold; color:#1c2128;">Total</td>
+          <td align="right" style="padding:16px 0 0 0; font-size:15px; font-weight:bold; color:#1c2128; white-space:nowrap;">%%=FormatCurrency(@total, "pt-BR")=%%</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

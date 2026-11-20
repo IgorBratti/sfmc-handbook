@@ -1,0 +1,32 @@
+%%[
+/* Hero chosen by segment, with the rules kept in a data extension and clicks
+   attributed to the variant through an impression region.
+   Offer_Map_DE: Segment (Text 50, PK), ContentKey (Text 100), Headline (Text 200), CtaText (Text 50), CtaUrl (Text 500)
+   Segments come from sql/scoring/engagement-segments.sql (Champion, Engaged, Passive, At risk).
+   Marketing changes the offer by editing Offer_Map_DE; the email doesn't change. */
+
+VAR @segment, @map, @headline, @cta, @url, @region
+SET @segment = AttributeValue("EngagementSegment")
+IF Empty(@segment) THEN SET @segment = "Default" ENDIF
+
+SET @map = LookupRows("Offer_Map_DE", "Segment", @segment)
+IF RowCount(@map) == 0 THEN
+  SET @map = LookupRows("Offer_Map_DE", "Segment", "Default")
+ENDIF
+
+SET @headline = Field(Row(@map, 1), "Headline")
+SET @cta = Field(Row(@map, 1), "CtaText")
+SET @url = Concat(Field(Row(@map, 1), "CtaUrl"), "?utm_source=sfmc&utm_medium=email&utm_content=", URLEncode(Lowercase(Replace(@segment, " ", "_")), 1, 1))
+SET @region = Concat("hero_", Lowercase(Replace(@segment, " ", "_")))
+]%%
+%%=BeginImpressionRegion(@region)=%%
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td style="padding:36px 40px 8px 40px; font-family:Arial, Helvetica, sans-serif;">
+      <h1 style="margin:0 0 16px 0; font-size:28px; line-height:34px; color:#1c2128;">%%=v(@headline)=%%</h1>
+      <a href="%%=RedirectTo(@url)=%%" alias="%%=v(@region)=%%_cta"
+         style="display:inline-block; background-color:#0b4f8a; color:#ffffff; font-size:16px; font-weight:bold; line-height:44px; padding:0 24px; text-decoration:none; border-radius:5px;">%%=v(@cta)=%%</a>
+    </td>
+  </tr>
+</table>
+%%=EndImpressionRegion()=%%

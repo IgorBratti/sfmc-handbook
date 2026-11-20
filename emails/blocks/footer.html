@@ -1,14 +1,25 @@
-<!-- Footer with the Marketing Cloud personalization strings for commercial sends:
-     view in browser, preference center, unsubscribe and the sender's physical address
-     (filled from the account's Sender Profile / account settings). -->
+<!-- Footer for commercial sends: web version, preference center, unsubscribe and the sender's
+     physical address (filled from the account / sender settings at send time).
+
+     "Update preferences" has two options:
+       A) Marketing Cloud profile center (default below, system string profile_center_url).
+       B) Your own preference center CloudPage with a signed link. Copy the email snippet from
+          cloudpages/preference-center/README.md (section 4, Setup) and use it as the href.
+
+     Keep the system unsubscribe link (unsub_center_url) or a custom unsubscribe configured in the
+     account: commercial sends need an unsubscribe path that Marketing Cloud recognizes.
+
+     Note: AMPscript and personalization strings run even inside HTML comments, so this comment
+     intentionally contains no delimiters. -->
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr>
-    <td style="padding:24px 40px; border-top:1px solid #e3e7ec; font-family:Arial, Helvetica, sans-serif; font-size:12px; line-height:18px; color:#7a8590;">
+    <td style="padding:24px 40px; border-top:1px solid #e3e7ec; font-family:Arial, Helvetica, sans-serif; font-size:12px; line-height:18px; color:#6b7580;">
       <p style="margin:0 0 8px 0;">
-        <a href="%%view_email_url%%" style="color:#7a8590; text-decoration:underline;">View in browser</a> &nbsp;·&nbsp;
-        <a href="%%profile_center_url%%" style="color:#7a8590; text-decoration:underline;">Update preferences</a> &nbsp;·&nbsp;
-        <a href="%%unsub_center_url%%" style="color:#7a8590; text-decoration:underline;">Unsubscribe</a>
+        <a href="%%view_email_url%%" alias="footer_web_version" style="color:#6b7580; text-decoration:underline;">View in browser</a> &nbsp;·&nbsp;
+        <a href="%%profile_center_url%%" alias="footer_preferences" style="color:#6b7580; text-decoration:underline;">Update preferences</a> &nbsp;·&nbsp;
+        <a href="%%unsub_center_url%%" alias="footer_unsubscribe" style="color:#6b7580; text-decoration:underline;">Unsubscribe</a>
       </p>
+      <p style="margin:0 0 8px 0;">You're receiving this email because you signed up at example.com.</p>
       <p style="margin:0;">
         %%Member_Busname%% · %%Member_Addr%% · %%Member_City%%, %%Member_State%% %%Member_PostalCode%% · %%Member_Country%%
       </p>
